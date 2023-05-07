@@ -15,11 +15,15 @@ use App\Http\Controllers\LoginController;
 */
 
 Route::get('/', function () {
-    return view('index');
+    return redirect('/login');
 });
 
-Route::post('/login', [LoginController::class, 'login']);
+Route::controller(\App\Http\Controllers\LoginController::class) -> group(function (){
+    Route::get('/login', 'login')->middleware("prevent-back-history")->middleware("member");
+    Route::post('/login', 'doLogin')->middleware("prevent-back-history")->middleware("member");
+    Route::post('/logout', 'doLogout')->middleware("prevent-back-history")->middleware("session");
+});
 
-Route::get('/template', function () {
-    return view('template');
+Route::controller(\App\Http\Controllers\TemplateController::class) -> group(function (){
+    Route::get('/template', 'template')->middleware("prevent-back-history")->middleware("session");
 });
